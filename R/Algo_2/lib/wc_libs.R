@@ -1,15 +1,14 @@
 library(caret)
 
-mset_stock <- function(dat, stockNm, predict_period){
-  tr_dat <- dat[1:(nrow(dat)-predict_period),]
-  #te_dat <- dat[(nrow(dat)-predict_period+1):nrow(dat),]
-
-  model <- lm(
-    formula(paste(stockNm," ~ .",sep='')),
-    data=tr_dat
-  )
-  
-  return(model)
+#MSET Filter
+mset_filter <- function(mset,predict_period,msetRange){
+  if(is.na(all(mset))) next()
+  if( round(ncol(mset)*0.8) < 2) next()
+  mset2 <- sort(colSums(abs(mset[1:predict_period,])))[1:max(1, round(ncol(mset)*0.8) )]
+  mset <- mset[, names(mset2)]
+  colnames(mset)
+  mset_recommend_list <- colnames(mset[,colMeans(tail(mset,msetRange)) < 0]) 
+  return(mset_recommend_list)
 }
 
 dat_prep_1 <- function(dat){

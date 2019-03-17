@@ -25,10 +25,14 @@ rsiLimit <- 70
 recommendItem <- 50
 msetRange <- 2
 
+myMoney <- 10000000
+transaction_history <- NULL
+
 #활용 데이터
 dat <- full_dat[(today_date-training_period+1):today_date,]
 dat <- dat_prep_1(dat)
-
+#trdat <- dat[1:(nrow(dat)-1),]
+tr_dat <- dat
 #Step 1 : Clustering
 clust = clust_stocks(dat,5)
 
@@ -37,82 +41,39 @@ for( clustNum in 1:length(clust)){
   if(is.null(clust[[clustNum]]) || length(clust[[clustNum]]) < 2) next()
   stockNms <- clust[[clustNum]]
   tdat <- dat[,stockNms]
+
+  #Mset
+  mset <- mset_Regress(tdat,predict_period)$predict
   
-  for( stockNm in stockNms){
-    m <- mset_stock(tdat,stockNm,predict_period)
-    
-    te_dat <- tdat[(nrow(tdat)-predict_period+1):nrow(tdat),]
-    pred_dat <- predict(m, newdata = te_dat)
-    
-    #MSET Filter
-    mset <- m1$num[[curDay]]
-    if(is.na(all(mset))) next()
-    if( round(ncol(mset)*0.8) < 2) next()
-    mset2 <- sort(colSums(abs(mset[1:3,])))[1:max(1, round(ncol(mset)*0.8) )]
-    mset <- mset[, names(mset2)]
-    colnames(mset)
-    mset_recommend_list <- colnames(mset[,colMeans(tail(mset,msetRange)) < 0])    
+  #Mset Filter
+  mset_recommend_list <- mset_filter(mset,predict_period,msetRange)
+  
+  for(mset_recommend in mset_recommend_list){
+    #RSI Filter
+    if( tail(RSI(tr_dat[,mset_recommend]),1) >= rsiLimit &&
+        lm(tail(RSI(tr_dat[,mset_recommend]),5)~c(1:5))$coefficients[2] > 0
+    ){
+      #매수
+      buyPricePerOne <- dat[nrow(dat),mset_recommend]
+      stockCnt <- max(1, round(100000/buyPricePerOne))
+      totalBuyPrice <- stockCnt * buyPricePerOne
+      myMoney <- myMoney-totalBuyPrice
+      print(paste('거래일',today_date,':',mset_recommend,'종목 매수. 갯수:',stockCnt,'개당 매수 가격:',buyPricePerOne,'총 매수가격:',totalBuyPrice))
+      #curDate,myMoney,stockNm,buyDate,buyPricePerOne,buyNumbers,totalBuyPrice,sellDate,sellPricePerOne,sellNumbers,totalSellPrice,Income,status
+      stock_transaction <- c(today_date,
+                             myMoney,
+                             mset_recommend,
+                             today_date,
+                             buyPricePerOne,
+                             stockCnt,
+                             totalBuyPrice,
+                             '',0,0,0,0,1
+                             )
+      transaction_history <- rbind(transaction_history,stock_transaction)
+      #curDate,myMoney,stockNm,buyDate,buyPricePerOne,buyNumbers,totalBuyPrice,sellDate,sellPricePerOne,sellNumbers,totalSellPrice,Income,status
+      #status 1:on hand 2:sold
+      }
   }
   
-  m1 <- m[[clustNum]]
-  
-  for( curDay in current_date:(current_date+test_period-predict_period)){
-    tr_startDate <- curDay-training_period
-    tr_endDate <- curDay-1
-    tr_dat <- tdat[tr_startDate:tr_endDate, ]
-    
-    print(paste('Cluster',clustNum,',거래 일:',curDay,',분석 범위(날짜):',tr_startDate,'~', tr_endDate))
-    
-    #MSET Filter
-    mset <- m1$num[[curDay]]
-    if(is.na(all(mset))) next()
-    if( round(ncol(mset)*0.8) < 2) next()
-    mset2 <- sort(colSums(abs(mset[1:3,])))[1:max(1, round(ncol(mset)*0.8) )]
-    mset <- mset[, names(mset2)]
-    colnames(mset)
-    mset_recommend_list <- colnames(mset[,colMeans(tail(mset,msetRange)) < 0])
-    
-    for(mset_recommend in mset_recommend_list){
-      #RSI Filter
-      if( tail(RSI(tr_dat[,mset_recommend]),1) >= rsiLimit &&
-          lm(tail(RSI(tr_dat[,mset_recommend]),5)~c(1:5))$coefficients[2] > 0
-      ){
-        #매수
-        stockPrice <- dat[current_date,mset_recommend]
-        stockCnt <- max(1, round(1000000/stockPrice))
-        buyPrice <- stockCnt * stockPrice
-        buyList <- c(buyList,buyPrice)
-        
-        money[curDay] <- money[curDay] - buyPrice
-        
-        #매도
-        sellPrice <- 0
-        sellDate <- NULL
-        sellprice_1 <- 0
-        for(i in 1:20){
-          sellprice_1 <- dat[current_date+i, mset_recommend]
-          sellPrice <- stockCnt * dat[current_date+i, mset_recommend]
-          if(sellPrice > buyPrice*1.02) {
-            money[curDay+i] <- money[curDay+i] + sellPrice
-            sellDate = curDay + i
-            break()
-          }
-        }
-        
-        sellList <- c(sellList,sellPrice)
-        income <- sellPrice-buyPrice
-        print(paste('      Buy:',mset_recommend,',Price:',buyPrice,',1:',stockPrice))
-        print(paste('     Sell:',mset_recommend,',Price:',sellPrice,',Sell Date:',sellDate,',Income:',income,',1:',sellprice_1))
-        plot(dat[,mset_recommend], type='l')
-        abline(v=curDay, col='blue')
-        abline(v=sellDate, col='red')
-      }
-    }
-    
-    money[curDay+1] <- money[curDay+1] + money[curDay]
-  } 
 }
-str <- paste(sum( sellList-buyList ),
-             ' ,', length( which( (sellList-buyList)>0 )),'/',length(sellList) ,
-             ' ,',win_rate_temp, sep='')
-print(str)
+colnames(transaction_history) <- c('curDate','myMoney','stockNm','buyDate','buyPricePerOne','buyNumbers','totalBuyPrice','sellDate','sellPricePerOne','sellNumbers','totalSellPrice','income','status')
