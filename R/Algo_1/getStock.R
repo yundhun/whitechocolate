@@ -8,7 +8,7 @@ library(dplyr)
 kosdaq_table <- readRDS("./dat/kosdaq.rds")
 #kosdaq <- readRDS("./dat/kosdaq.rds")
 start_date <- Sys.Date()
-rangevalue=100
+rangevalue=500
 histlist <- list()
 kosdaq <- kosdaq_table
 for(j in 1:nrow(kosdaq)){
@@ -33,3 +33,6 @@ for(j in 1:nrow(kosdaq)){
   histlist <<- append(histlist,hist)
   Sys.sleep(0.5)
 }
+
+
+saveRDS(histlist,file="../kosdaq/kosdaq_1000_20190324.rds")
