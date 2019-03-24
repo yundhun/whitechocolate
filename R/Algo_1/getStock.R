@@ -34,5 +34,19 @@ for(j in 1:nrow(kosdaq)){
   Sys.sleep(0.5)
 }
 
-
 saveRDS(histlist,file="../kosdaq/kosdaq_1000_20190324.rds")
+
+head(histlist)
+
+hist <- lapply(histlist, function(x) {
+  x$last_price %>% data.frame(stringsAsFactors = F)
+})
+hist <- do.call(cbind, last_price)
+colnames(hist) <-names(histlist)
+hist<-cbind(data=histlist[[1]]$date,hist)
+saveRDS(hist,"../kosdaq/kosdaq_500_20190324_lastprice.rds")
+
+
+
+
+
