@@ -26,7 +26,7 @@ myMoney <- 10000000
 transaction_history <- NULL
 #today_date ; 오늘 날짜 
 for ( today_date in training_period:100){
-  #
+  #Logging
   print(paste('#Date: ',today_date))
   
   #활용 데이터
