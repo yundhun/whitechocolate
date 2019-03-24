@@ -7,5 +7,5 @@ kospi_table <- read.csv("KOSPI.txt",stringsAsFactors = F,sep = "\t",encoding = "
 kospi_table[,1]<-trimws(kospi_table[,1])
 kospi_table[,2]<-as.character(trimws(kospi_table[,2]))
 
-saveRDS("./dat/kosdaq.rds")
-saveRDS("./dat/kospi.rds")
+saveRDS(kosdaq_table,"./dat/kosdaq.rds")
+saveRDS(kospi_table,"./dat/kospi.rds")
