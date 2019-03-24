@@ -31,7 +31,7 @@ for ( today_date in testDateList){
   #Step2 매수
   #----------
   #Step2-1 : Get Train Data
-  trdat = get_train_data(today_date, training_period) 
+  trdat = get_train_data(today_date, training_period)
   trdat = trdat[,-1] #날짜 제거
   
   #Step2-2 : Clustering
@@ -43,6 +43,7 @@ for ( today_date in testDateList){
     clt_trdat = trdat[,as.vector(clt)]
     #MSET
     mset = mset_Regress(clt_trdat,predict_period)$predict
+    mset2 = mset_Regress(clt_trdat,predict_period)$predict2
     mset_recommend_list = mset_filter(mset,predict_period,msetRange)
     for(mset_recommend in mset_recommend_list){
       rsi_rule = list('rsi_limit'=rsi_limit,'rsi_trend_days'=rsi_trend_days)
@@ -56,10 +57,10 @@ for ( today_date in testDateList){
                        'volume'=volume,
                        'price'=price)
         print(bid_dat)
-        bid_insert_db(bid_dat)
-        sendEmail(bid_dat)
+        #bid_insert_db(bid_dat)
+        #sendEmail(bid_dat)
+        wc_plot_2(clt_trdat,mset_recommend,mset2, today_date)
         #bid(bid_dat)
-        #plot(clt_trdat[(nrow(clt_trdat)-30):nrow(clt_trdat),mset_recommend], main=mset_recommend,type='l')
       }
     }    
     
