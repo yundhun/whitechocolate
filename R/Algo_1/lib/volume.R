@@ -72,7 +72,7 @@ ll<-lapply(smallhistlist,yoosma,n=c(20,60))
 
 ##
 compare_mv <- function(x,price=...,alpha=...){
-  v <- x[1,2]
+  v <- x[1,]$last_price
   cv <- c()
   price_length<- length(price)
   check <- rep(FALSE,price_length)
@@ -92,7 +92,7 @@ compare_mv <- function(x,price=...,alpha=...){
 }
 
 compare_mv_new <- function(x,price=...,alpha=...,test="abs"){
-  v <- x[1,2]
+  v <- x[1,]$last_price
   cv <- c()
   price_length<- length(price)
   check <- rep(FALSE,price_length)
