@@ -9,12 +9,10 @@ predict_period <- 3 #예측 기간
 recommendItem <- 50 #MSET 추천 갯수
 msetRange <- 2
 #RSI 관련
-rsi_limit <- 70 #RSI 기준
+rsi_limit <- 60 #RSI 기준
 rsi_trend_days <- 5 #RSI 경향 분석 기간
 
-myMoney <- 10000000
-
-testDateList <- c("2018-10-25","2018-10-26","2018-10-29","2018-10-30","2018-10-31","2018-11-01","2018-11-02","2018-11-05")
+testDateList <- readRDS('./testDateList.rds')
 
 for ( today_date in testDateList){
   print(paste('#Date: ',today_date))
@@ -59,7 +57,9 @@ for ( today_date in testDateList){
                        'price'=price)
         print(bid_dat)
         bid_insert_db(bid_dat)
+        sendEmail(bid_dat)
         #bid(bid_dat)
+        #plot(clt_trdat[(nrow(clt_trdat)-30):nrow(clt_trdat),mset_recommend], main=mset_recommend,type='l')
       }
     }    
     
