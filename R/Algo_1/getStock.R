@@ -3,6 +3,7 @@ library(httr)
 library(rvest)
 library(xts)
 library(tibble)
+library(dplyr)
 
 kosdaq_table <- readRDS("./dat/kosdaq.rds")
 #kosdaq <- readRDS("./dat/kosdaq.rds")
