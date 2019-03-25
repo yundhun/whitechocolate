@@ -10,3 +10,10 @@ get_train_data <- function(target_date, n_period){
 
 #colnames(dat) <- paste0('S_', colnames(dat))
 #str(dat)
+get_train_data_new <- function(target_date, n_period){
+  dat = readRDS('../kosdaq/all_stock_lastprice.rds')
+  colnames(dat) <- paste0('S_', colnames(dat))
+  idx = which(dat[,1]==target_date)
+  tdat = dat[(idx-n_period+1):idx,]
+  return(tdat)
+}
