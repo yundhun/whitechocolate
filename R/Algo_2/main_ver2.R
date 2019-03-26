@@ -14,6 +14,8 @@ rsi_trend_days <- 5 #RSI 경향 분석 기간
 
 testDateList <- readRDS('./testDateList.rds')
 
+watch_list <- c('S_144960','S_102710')
+
 for ( today_date in testDateList){
   print(paste('#Date: ',today_date))
 
@@ -44,6 +46,12 @@ for ( today_date in testDateList){
     #MSET
     mset = mset_Regress(clt_trdat,predict_period)$predict
     mset2 = mset_Regress(clt_trdat,predict_period)$predict2
+    #LookUp
+    for(x in which(watch_list %in% colnames(mset2))){
+      stockNm <- watch_list[x]
+      print(stockNm)
+      wc_plot_3(clt_trdat,stockNm,mset2, today_date)
+    }
     mset_recommend_list = mset_filter(mset,predict_period,msetRange)
     for(mset_recommend in mset_recommend_list){
       rsi_rule = list('rsi_limit'=rsi_limit,'rsi_trend_days'=rsi_trend_days)

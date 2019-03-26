@@ -20,3 +20,11 @@ wc_plot_2 <- function(clt_trdat,mset_recommend,mset2,today_date){
   plot(clt_trdat_tmp[,mset_recommend],type='l',col='red', ylim=c(min_y,max_y), main=paste0(today_date,':',mset_recommend), sub ='red: Actual, blue: Pred')
   points(mset2[,mset_recommend],type='l',col='blue')
 }
+
+wc_plot_3 <- function(clt_trdat,mset_recommend,mset2,today_date){
+  clt_trdat_tmp <- clt_trdat[(nrow(clt_trdat)-2):nrow(clt_trdat),]
+  min_y <- min(clt_trdat_tmp[,mset_recommend], mset2[,mset_recommend])
+  max_y <- max(clt_trdat_tmp[,mset_recommend], mset2[,mset_recommend])
+  plot(clt_trdat_tmp[,mset_recommend],type='l',col='red', ylim=c(min_y,max_y), main=paste0('[Watch]',today_date,':',mset_recommend), sub ='red: Actual, blue: Pred')
+  points(mset2[,mset_recommend],type='l',col='blue')
+}
