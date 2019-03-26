@@ -4,15 +4,18 @@ library(rvest)
 library(xts)
 library(tibble)
 library(dplyr)
+library(DataCombine)
 
 kosdaq_table <- readRDS("./dat/kosdaq.rds")
+kospi_table <- readRDS("./dat/kospi.rds")
 #kosdaq <- readRDS("./dat/kosdaq.rds")
 start_date <- Sys.Date()
 rangevalue=500
 histlist <- list()
-kosdaq <- kosdaq_table
-for(j in 1:nrow(kosdaq)){
-  code <- kosdaq$code[j]
+all_table <- rbind(kosdaq_table,kospi_table)
+
+for(j in 1:nrow(all_table)){
+  code <- all_table$code[j]
   url2 <- paste0("https://fchart.stock.naver.com/sise.nhn?symbol="
                  ,code,"&timeframe=day&count=",rangevalue,"&requestType=0")
   hist <- GET(url2) %>%
@@ -20,6 +23,10 @@ for(j in 1:nrow(kosdaq)){
     html_nodes("item") %>%
     html_attr("data") %>%
     strsplit("\\|") %>% rev
+  
+  if(length(hist)<rangevalue ){
+    next
+  }
   
   hist <- lapply(hist, function(x) {
     x %>% t() %>% data.frame(stringsAsFactors = F)
@@ -36,20 +43,21 @@ for(j in 1:nrow(kosdaq)){
   Sys.sleep(0.5)
 }
 
-saveRDS(histlist,file="../kosdaq/kosdaq_1000_20190324.rds")
+saveRDS(histlist,file="../kosdaq/all_stock.rds")
 
 head(histlist)
 
 
-###°¡°Ýrds
+###????rds
 hist <- lapply(histlist, function(x) {
   x$last_price %>% data.frame(stringsAsFactors = F)
 })
 hist <- do.call(cbind, hist)
 colnames(hist) <-names(histlist)
-hist<-cbind(data=histlist[[1]]$date,hist)
-saveRDS(hist,"../kosdaq/kosdaq_500_20190324_lastprice.rds")
-
+hist<-cbind(date=histlist[[1]]$date,hist)
+hist <- hist[nrow(hist):1,]
+row.names(hist) <- 1:nrow(hist)
+saveRDS(hist,"../kosdaq/all_stock_lastprice.rds")
 
 
 

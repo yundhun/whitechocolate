@@ -34,6 +34,11 @@ for ( today_date in testDateList){
   #----------
   #Step2-1 : Get Train Data
   trdat = get_train_data(today_date, training_period)
+  
+  ############ fix here #################
+  ##trdat2 = get_train_data_new(today_date, training_period)
+  
+  
   trdat = trdat[,-1] #날짜 제거
   
   #Step2-2 : Clustering
