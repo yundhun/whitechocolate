@@ -6,14 +6,11 @@ library(tibble)
 library(dplyr)
 library(DataCombine)
 
-kosdaq_table <- readRDS("./dat/kosdaq.rds")
-kospi_table <- readRDS("./dat/kospi.rds")
-#kosdaq <- readRDS("./dat/kosdaq.rds")
 start_date <- Sys.Date()
 rangevalue=500
 histlist <- list()
-all_table <- rbind(kosdaq_table,kospi_table)
-
+all_table <- readRDS("../kosdaq/all_stock_table.rds")
+#saveRDS(all_table,"../kosdaq/all_stock_table.rds")
 for(j in 1:nrow(all_table)){
   code <- all_table$code[j]
   url2 <- paste0("https://fchart.stock.naver.com/sise.nhn?symbol="
@@ -25,6 +22,9 @@ for(j in 1:nrow(all_table)){
     strsplit("\\|") %>% rev
   
   if(length(hist)<rangevalue ){
+    next
+  }
+  if(start_date != as.Date(hist[[1]][1],"%Y%m%d")){
     next
   }
   
