@@ -5,7 +5,7 @@ library(xts)
 library(tibble)
 library(dplyr)
 
-get_stock<-function(code,rangevalue,sleep=0.5){
+get_stock<-function(code,rangevalue,sleep=0.5,start_date=Sys.Date()){
   url2 <- paste0("https://fchart.stock.naver.com/sise.nhn?symbol="
                  ,code,"&timeframe=day&count=",rangevalue,"&requestType=0")
   hist <- GET(url2) %>%
@@ -13,7 +13,8 @@ get_stock<-function(code,rangevalue,sleep=0.5){
     html_nodes("item") %>%
     html_attr("data") %>%
     strsplit("\\|") %>% rev
-  if(length(hist)<rangevalue ){
+  
+  if(length(hist)< rangevalue ){
     return (NULL)
   }
   if(start_date != as.Date(hist[[1]][1],"%Y%m%d")){
@@ -39,11 +40,10 @@ get_stock<-function(code,rangevalue,sleep=0.5){
   return (hist)  
 }
 
-update_last_price <- function(file_path="../kosdaq/",stock_table="all_stock_table.rdsrds",file_name="kosdaq_500_20190324_lastprice.rds"){
+update_last_price <- function(start_date=Sys.Date(),file_path="../kosdaq/",stock_table="all_stock_table.rdsrds",file_name="all_stock_lastprice.rds"){
   
   stock_data <-readRDS(paste0(file_path,file_name))
   code_table <-readRDS(paste0(file_path,stock_table))
-  start_date <- Sys.Date()
   base_date <- stock_data[nrow(stock_data),1]
   rangevalue <- as.numeric(start_date-base_date)
   
@@ -56,7 +56,7 @@ update_last_price <- function(file_path="../kosdaq/",stock_table="all_stock_tabl
   for(i in 2:length(codenames)){
   
     code <- codenames[i]
-    stock <- get_stock(code,rangevalue)
+    stock <- get_stock(code,rangevalue,start_date=start_date)
     
     if(is.null(stock)){
       next
