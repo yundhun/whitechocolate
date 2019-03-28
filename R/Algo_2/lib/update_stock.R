@@ -40,23 +40,23 @@ get_stock<-function(code,rangevalue,sleep=0.5,start_date=Sys.Date()){
   return (hist)  
 }
 
-update_last_price <- function(start_date=Sys.Date(),file_path="../kosdaq/",stock_table="all_stock_table.rdsrds",file_name="all_stock_lastprice.rds"){
+update_last_price <- function(start_date=Sys.Date(),file_path="../kosdaq/",stock_table="all_stock_table.rds",file_name="all_stock_lastprice.rds",sleep=0.5){
   
-  stock_data <-readRDS(paste0(file_path,file_name))
+  mset_stock_train_dat <-readRDS(paste0(file_path,file_name))
   code_table <-readRDS(paste0(file_path,stock_table))
-  base_date <- stock_data[nrow(stock_data),1]
+  base_date <- mset_stock_train_dat[nrow(mset_stock_train_dat),1]
   rangevalue <- as.numeric(start_date-base_date)
   
   
   if(rangevalue<1){
     stop("alread update")
   }
-  codenames <- colnames(stock_data)
+  codenames <- colnames(mset_stock_train_dat)
   insert_index <- NULL
   for(i in 2:length(codenames)){
   
     code <- codenames[i]
-    stock <- get_stock(code,rangevalue,start_date=start_date)
+    stock <- get_stock(code,rangevalue,sleep=sleep,start_date=start_date)
     
     if(is.null(stock)){
       next
@@ -71,16 +71,17 @@ update_last_price <- function(start_date=Sys.Date(),file_path="../kosdaq/",stock
     stock <- stock[which(stock$date>base_date),]
     
     if(is.null(insert_index)){
-     m<-data.frame(matrix(nrow=nrow(stock),ncol=ncol(stock_data)))  
-     colnames(m)<-colnames(stock_data)
+     m<-data.frame(matrix(nrow=nrow(stock),ncol=ncol(mset_stock_train_dat)))  
+     colnames(m)<-colnames(mset_stock_train_dat)
      m[,1] <- as.Date(stock$date,"%Y%m%d")
      
-     insert_index <- seq(nrow(stock_data)+1,nrow(stock_data)+nrow(stock),by=1) 
-     stock_data<-rbind(stock_data,m)  
+     insert_index <- seq(nrow(mset_stock_train_dat)+1,nrow(mset_stock_train_dat)+nrow(stock),by=1) 
+     mset_stock_train_dat<-rbind(mset_stock_train_dat,m)  
     }
-    stock_data[insert_index,i] <- stock$last_price
+    mset_stock_train_dat[insert_index,i] <- stock$last_price
     
   }
-  saveRDS(stock_data,paste0(file_path,file_name))
-  
+  saveRDS(mset_stock_train_dat,paste0(file_path,file_name))
+  assign("mset_stock_train_dat", mset_stock_train_dat, envir = .GlobalEnv)
+  colnames(mset_stock_train_dat) <- paste0('S_', colnames(mset_stock_train_dat))
 }

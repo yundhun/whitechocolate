@@ -4,6 +4,8 @@
 #라이브러리 로드
 source('./lib/load_libs.R')
 
+update_last_price(start_date=Sys.Date()-1)
+
 #Parameter Setting
 training_period <- 100 #Training 범위
 n_clust <- 5 #Cluster 개수
