@@ -14,12 +14,12 @@ get_stock<-function(code,rangevalue,sleep=0.5,start_date=Sys.Date()){
     html_attr("data") %>%
     strsplit("\\|") %>% rev
   
-  if(length(hist)< rangevalue ){
-    return (NULL)
-  }
-  if(start_date != as.Date(hist[[1]][1],"%Y%m%d")){
-    return (NULL)
-  }
+##  if(length(hist)< rangevalue ){
+##    return (NULL)
+##  }
+##  if(start_date != as.Date(hist[[1]][1],"%Y%m%d")){
+##    return (NULL)
+##  }
   
   
   hist <- lapply(hist, function(x) {
@@ -69,6 +69,10 @@ update_last_price <- function(start_date=Sys.Date(),file_path="../kosdaq/",stock
 
     stock <- stock[[1]]
     stock <- stock[which(stock$date>base_date),]
+    
+    if(nrow(stock)<1){
+      stop("alread update")
+    }
     
     if(is.null(insert_index)){
      m<-data.frame(matrix(nrow=nrow(stock),ncol=ncol(mset_stock_train_dat)))  

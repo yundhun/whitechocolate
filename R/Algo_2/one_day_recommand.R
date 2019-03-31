@@ -1,20 +1,20 @@
 ### one day recommand
 
 
-#?¼?´ë¸ŒëŸ¬ë¦? ë¡œë“œ
+#??????ë¸ŒëŸ¬??? ë¡œë“œ
 source('./lib/load_libs.R')
 
-update_last_price(start_date=Sys.Date()-1)
+update_last_price(start_date=Sys.Date(),sleep = 0)
 
 #Parameter Setting
 training_period <- 100 #Training ë²”ìœ„
 n_clust <- 5 #Cluster ê°œìˆ˜
-#MSET ê´€? ¨
-predict_period <- 3 #?˜ˆì¸? ê¸°ê°„
-recommendItem <- 50 #MSET ì¶”ì²œ ê°??ˆ˜
+#MSET ê´€???
+predict_period <- 3 #?????? ê¸°ê°„
+recommendItem <- 50 #MSET ì¶”ì²œ ??????
 msetRange <- 2
-#RSI ê´€? ¨
-rsi_limit <- 60 #RSI ê¸°ì?€
+#RSI ê´€???
+rsi_limit <- 60 #RSI ê¸°???
 rsi_trend_days <- 5 #RSI ê²½í–¥ ë¶„ì„ ê¸°ê°„
 
 
@@ -22,7 +22,7 @@ today_date <- Sys.Date()-1
 
 trdat = get_train_data_new(today_date, training_period)
 
-trdat = trdat[,-1] #?‚ ì§? ? œê±?
+trdat = trdat[,-1] #?????? ??????
 
 #Step2-2 : Clustering
 clust = clust_stocks(trdat,n_clust)
