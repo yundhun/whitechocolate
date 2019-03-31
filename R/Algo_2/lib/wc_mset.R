@@ -39,5 +39,5 @@ mset_filter <- function(mset,predict_period,msetRange){
   mset <- mset[, names(mset2)]
   colnames(mset)
   mset_recommend_list <- colnames(mset[,colMeans(tail(mset,msetRange)) < 0]) 
-  return(mset_recommend_list)
+  return(mset_recommend_list[1])
 }

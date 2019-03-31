@@ -1,7 +1,7 @@
 ### one day recommand
 
 
-#라이브러리 로드
+#?��?��브러�? 로드
 source('./lib/load_libs.R')
 
 update_last_price(start_date=Sys.Date()-1)
@@ -9,12 +9,12 @@ update_last_price(start_date=Sys.Date()-1)
 #Parameter Setting
 training_period <- 100 #Training 범위
 n_clust <- 5 #Cluster 개수
-#MSET 관련
-predict_period <- 3 #예측 기간
-recommendItem <- 50 #MSET 추천 갯수
+#MSET 관?��
+predict_period <- 3 #?���? 기간
+recommendItem <- 50 #MSET 추천 �??��
 msetRange <- 2
-#RSI 관련
-rsi_limit <- 60 #RSI 기준
+#RSI 관?��
+rsi_limit <- 60 #RSI 기�?�
 rsi_trend_days <- 5 #RSI 경향 분석 기간
 
 
@@ -22,7 +22,7 @@ today_date <- Sys.Date()-1
 
 trdat = get_train_data_new(today_date, training_period)
 
-trdat = trdat[,-1] #날짜 제거
+trdat = trdat[,-1] #?���? ?���?
 
 #Step2-2 : Clustering
 clust = clust_stocks(trdat,n_clust)
@@ -30,8 +30,8 @@ for( clt in clust){
   #Select Cluster data from Train Data
   clt_trdat = trdat[,as.vector(clt)]
   #MSET
-  mset = mset_Regress(clt_trdat,predict_period)$predict
-  mset2 = mset_Regress(clt_trdat,predict_period)$predict2
+  mset = mset_Regress_RF(clt_trdat,predict_period)$predict
+  mset2 = mset_Regress_RF(clt_trdat,predict_period)$predict2
   mset_recommend_list = mset_filter(mset,predict_period,msetRange)
   for(mset_recommend in mset_recommend_list){
     rsi_rule = list('rsi_limit'=rsi_limit,'rsi_trend_days'=rsi_trend_days)
