@@ -20,7 +20,7 @@ mset_Regress = function(x,predict_period) {
     )
     #model <- step(model, trace = F)
     pred <- predict(model, newdata = new_dat)
-    predict_mat[,i] <- scale(new_dat[,i] - pred)
+    predict_mat[,i] <- (new_dat[,i] - pred) / new_dat[,i]
     predict_mat_2[,i] <- pred
   }
   
@@ -37,7 +37,14 @@ mset_filter <- function(mset,predict_period,msetRange){
   if( round(ncol(mset)*0.8) < 2) return(NULL)
   mset2 <- sort(colSums(abs(mset[1:predict_period,])))[1:max(1, round(ncol(mset)*0.8) )]
   mset <- mset[, names(mset2)]
-  colnames(mset)
-  mset_recommend_list <- colnames(mset[,colMeans(tail(mset,msetRange)) < 0]) 
+  mset_recommend_list <- NULL
+  for( cn in colnames(mset)){
+    lm_t <- lm(tail(mset[,cn],msetRange)~c(1:msetRange))
+    if( mean(tail(mset[,cn],msetRange)) < 0 && 
+        lm_t$coefficients[2] < 0 ){
+      mset_recommend_list <- c(mset_recommend_list,cn)
+    }
+  }
+  #mset_recommend_list <- colnames(mset[,colMeans(tail(mset,msetRange)) < 0]) 
   return(mset_recommend_list)
 }

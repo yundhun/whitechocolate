@@ -14,7 +14,7 @@ rsi_trend_days <- 5 #RSI 경향 분석 기간
 
 testDateList <- readRDS('./testDateList.rds')
 
-watch_list <- c('S_144960','S_102710')
+watch_list <- c('S_140410')
 
 for ( today_date in testDateList){
   print(paste('#Date: ',today_date))
@@ -51,12 +51,6 @@ for ( today_date in testDateList){
     #MSET
     mset = mset_Regress(clt_trdat,predict_period)$predict
     mset2 = mset_Regress(clt_trdat,predict_period)$predict2
-    #LookUp
-    for(x in which(watch_list %in% colnames(mset2))){
-      stockNm <- watch_list[x]
-      print(stockNm)
-      wc_plot_3(clt_trdat,stockNm,mset2, today_date)
-    }
     mset_recommend_list = mset_filter(mset,predict_period,msetRange)
     for(mset_recommend in mset_recommend_list){
       rsi_rule = list('rsi_limit'=rsi_limit,'rsi_trend_days'=rsi_trend_days)
@@ -69,11 +63,17 @@ for ( today_date in testDateList){
                        'stock_name'=mset_recommend,
                        'volume'=volume,
                        'price'=price)
-        print(bid_dat)
+        #print(bid_dat)
         #bid_insert_db(bid_dat)
         #sendEmail(bid_dat)
         wc_plot_2(clt_trdat,mset_recommend,mset2, today_date)
         #bid(bid_dat)
+        if(mean(tail(clt_trdat[,mset_recommend],2)) >  mean(tail(mset2[,mset_recommend],2))){
+          print(paste(mset_recommend,'Act & Pred'))
+          print(tail(clt_trdat[,mset_recommend],3))
+          print(tail(mset2[,mset_recommend],3))
+          quit()
+        }
       }
     }    
     
