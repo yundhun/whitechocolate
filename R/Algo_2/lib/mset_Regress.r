@@ -17,7 +17,7 @@ mset_Regress = function(x,predict_period) {
       )
     #model <- step(model, trace = F)
     pred <- predict(model, newdata = new_dat)
-    predict_mat[,i] <- scale(new_dat[,i] - pred)
+    predict_mat[,i] <- (new_dat[,i] - pred) / new_dat[,i]
   }
   
   ret <- list(
@@ -43,7 +43,7 @@ mset_Regress_RF = function(x,predict_period) {
                   data=tr_dat,ntree=10)
   
     pred <- predict(model, newdata = new_dat)
-    predict_mat[,i] <- scale(new_dat[,i] - pred)
+    predict_mat[,i] <- (new_dat[,i] - pred) / new_dat[,i]
   }
   
   ret <- list(

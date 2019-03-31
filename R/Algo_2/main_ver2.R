@@ -6,15 +6,13 @@ training_period <- 100 #Training 범위
 n_clust <- 5 #Cluster 개수
 #MSET 관련
 predict_period <- 3 #예측 기간
-recommendItem <- 50 #MSET 추천 갯수
 msetRange <- 2
 #RSI 관련
 rsi_limit <- 60 #RSI 기준
 rsi_trend_days <- 5 #RSI 경향 분석 기간
 
-testDateList <- readRDS('./testDateList.rds')
-
-watch_list <- c('S_140410')
+testDateList <- c(as.character(Sys.Date()))
+update_last_price(Sys.Date(),sleep = 0) #오늘날짜까지 비어있는 데이터 채워서 rds로 저장
 
 for ( today_date in testDateList){
   print(paste('#Date: ',today_date))
@@ -33,7 +31,7 @@ for ( today_date in testDateList){
   #Step2 매수
   #----------
   #Step2-1 : Get Train Data
-  trdat = get_train_data(today_date, training_period)
+  trdat = get_train_data(today_date, training_period) #rds 불러오기
   
   ############ fix here #################
   ##trdat2 = get_train_data_new(today_date, training_period)
@@ -63,17 +61,8 @@ for ( today_date in testDateList){
                        'stock_name'=mset_recommend,
                        'volume'=volume,
                        'price'=price)
-        #print(bid_dat)
-        #bid_insert_db(bid_dat)
-        #sendEmail(bid_dat)
+        print(bid_dat)
         wc_plot_2(clt_trdat,mset_recommend,mset2, today_date)
-        #bid(bid_dat)
-        if(mean(tail(clt_trdat[,mset_recommend],2)) >  mean(tail(mset2[,mset_recommend],2))){
-          print(paste(mset_recommend,'Act & Pred'))
-          print(tail(clt_trdat[,mset_recommend],3))
-          print(tail(mset2[,mset_recommend],3))
-          quit()
-        }
       }
     }    
     
