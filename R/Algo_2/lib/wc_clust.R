@@ -18,7 +18,7 @@ clust_stocks <- function(dat,n){
   ii <- 1
   for( i in 1:length(clust2)){
     cts <- clust2[[i]]
-    if(length(cts) == 2) next()
+    if(length(cts) <= 2) next()
     cts <- as.data.frame(cts)
     
     tmp <- rep(0,nrow(dat))
