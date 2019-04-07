@@ -69,11 +69,11 @@ update_last_price <- function(start_date=Sys.Date(),file_path="../kosdaq/",stock
 
     stock <- stock[[1]]
     stock <- stock[which(stock$date>base_date),]
-    
+   
     if(nrow(stock)<1){
       stop("alread update")
     }
-    
+    stock <- stock[nrow(stock):1,]
     if(is.null(insert_index)){
      m<-data.frame(matrix(nrow=nrow(stock),ncol=ncol(mset_stock_train_dat)))  
      colnames(m)<-colnames(mset_stock_train_dat)
