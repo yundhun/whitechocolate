@@ -18,9 +18,9 @@ rsi_limit <- 60 #RSI 기???
 rsi_trend_days <- 5 #RSI 경향 분석 기간
 
 
-today_date <- Sys.Date()-1
+today_date <- "2019-04-05"
 
-trdat = get_train_data_new(today_date, training_period)
+trdat = get_train_data(today_date, training_period)
 
 trdat = trdat[,-1] #?????? ??????
 
