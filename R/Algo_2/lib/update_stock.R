@@ -86,6 +86,6 @@ update_last_price <- function(start_date=Sys.Date(),file_path="../kosdaq/",stock
     
   }
   saveRDS(mset_stock_train_dat,paste0(file_path,file_name))
-  assign("mset_stock_train_dat", mset_stock_train_dat, envir = .GlobalEnv)
   colnames(mset_stock_train_dat) <- paste0('S_', colnames(mset_stock_train_dat))
+  assign("mset_stock_train_dat", mset_stock_train_dat, envir = .GlobalEnv)
 }

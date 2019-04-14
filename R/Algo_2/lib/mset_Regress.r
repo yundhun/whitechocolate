@@ -32,7 +32,9 @@ mset_Regress = function(x,predict_period) {
 mset_Regress_RF = function(x,predict_period) {
   
   predict_mat = matrix(numeric(0), predict_period,ncol(x) ) 
+  predict_mat2 = matrix(numeric(0), predict_period,ncol(x) ) 
   colnames(predict_mat) <- colnames(x)
+  colnames(predict_mat2) <- colnames(x)
   colNms <- colnames(predict_mat)
   
   tr_dat <- x[1:(nrow(x)-predict_period),]
@@ -44,10 +46,12 @@ mset_Regress_RF = function(x,predict_period) {
   
     pred <- predict(model, newdata = new_dat)
     predict_mat[,i] <- (new_dat[,i] - pred) / new_dat[,i]
+    predict_mat2[,i]<- pred
   }
   
   ret <- list(
-    predict = predict_mat
+    predict = predict_mat,
+    predict2 = predict_mat2
   )
   return(ret)
 }
