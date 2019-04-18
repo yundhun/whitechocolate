@@ -64,10 +64,10 @@ mset_Regress_RF = function(x,predict_period) {
 
 
 #MSET Filter
-mset_filter <- function(mset,predict_period,msetRange){
+mset_filter <- function(mset,predict_period,msetRange,round_index=0.8){
   if(is.na(all(mset))) return(NULL)
   if( round(ncol(mset)*0.8) < 2) return(NULL)
-  mset2 <- sort(colSums(abs(mset[1:predict_period,])))[1:max(1, round(ncol(mset)*0.8) )]
+  mset2 <- sort(colSums(abs(mset[1:predict_period,])))[1:max(1, round(ncol(mset)*round_index) )]
   mset <- mset[, names(mset2)]
   # mset_recommend_list <- NULL
   # for( cn in colnames(mset)){
@@ -78,5 +78,7 @@ mset_filter <- function(mset,predict_period,msetRange){
   #   }
   # }
   mset_recommend_list <- colnames(mset[,colMeans(tail(mset,msetRange)) < 0]) 
+  
+
   return(mset_recommend_list)
 }
