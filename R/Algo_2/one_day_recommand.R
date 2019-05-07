@@ -23,7 +23,8 @@ today_date <- "2019-05-07"
 trdat = get_train_data(today_date, training_period)
 
 trdat = trdat[,-1] #?????? ??????
-
+rfresult <<- c()
+lmresult <<- c()
 #Step2-2 : Clustering
 clust = clust_stocks(trdat,n_clust)
 for( clt in clust){
@@ -34,7 +35,7 @@ for( clt in clust){
 
   mset = result$predict
   mset2 = result$predict2
-  rfresult <<- c()
+
 
   mset_recommend_list = mset_filter(mset,predict_period,msetRange,round_index=1)
   
@@ -60,7 +61,7 @@ for( clt in clust){
   
   mset = result$predict
   mset2 = result$predict2
-  lmresult <<- c()
+
   
   mset_recommend_list = mset_filter(mset,predict_period,msetRange)
   
