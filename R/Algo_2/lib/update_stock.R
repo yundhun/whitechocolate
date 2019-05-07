@@ -68,6 +68,8 @@ update_last_price <- function(start_date=Sys.Date(),file_path="../kosdaq/",stock
     }
 
     stock <- stock[[1]]
+    
+    
     stock <- stock[which(stock$date>base_date),]
    
     if(nrow(stock)<1){
@@ -82,9 +84,16 @@ update_last_price <- function(start_date=Sys.Date(),file_path="../kosdaq/",stock
      insert_index <- seq(nrow(mset_stock_train_dat)+1,nrow(mset_stock_train_dat)+nrow(stock),by=1) 
      mset_stock_train_dat<-rbind(mset_stock_train_dat,m)  
     }
-    mset_stock_train_dat[insert_index,i] <- stock$last_price
-    
+   
+  
+    if(length(insert_index)>nrow(stock)){
+      mset_stock_train_dat[which(mset_stock_train_dat$date %in% stock$date),i] <- stock$last_price
+    }
+    else {mset_stock_train_dat[insert_index,i] <- stock$last_price
+    }
   }
+  rmname <- which(colnames(mset_stock_train_dat) %in% colnames(mset_stock_train_dat)[colSums(is.na(mset_stock_train_dat)) > 0])
+  mset_stock_train_dat <- mset_stock_train_dat[,-rmname]
   saveRDS(mset_stock_train_dat,paste0(file_path,file_name))
   colnames(mset_stock_train_dat) <- paste0('S_', colnames(mset_stock_train_dat))
   assign("mset_stock_train_dat", mset_stock_train_dat, envir = .GlobalEnv)

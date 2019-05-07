@@ -18,7 +18,7 @@ rsi_limit <- 60 #RSI 기???
 rsi_trend_days <- 5 #RSI 경향 분석 기간
 
 
-today_date <- "2019-04-18"
+today_date <- "2019-05-07"
 
 trdat = get_train_data(today_date, training_period)
 
@@ -34,7 +34,7 @@ for( clt in clust){
 
   mset = result$predict
   mset2 = result$predict2
-  rfresult <- c()
+  rfresult <<- c()
 
   mset_recommend_list = mset_filter(mset,predict_period,msetRange,round_index=1)
   
@@ -68,7 +68,7 @@ for( clt in clust){
     rsi_rule = list('rsi_limit'=rsi_limit,'rsi_trend_days'=rsi_trend_days)
     result = rsi_filter(clt_trdat, mset_recommend, rsi_rule)
     if(result){
-      lmresult <- c(lmresult,mset_recommend)
+      lmresult <<- c(lmresult,mset_recommend)
       price = tail(clt_trdat[,mset_recommend],1)
       volume = max(1, round(500000/price))
       bid_dat = list('id'=UUIDgenerate(),
