@@ -10,6 +10,7 @@ start_date <- Sys.Date()
 rangevalue=500
 histlist <- list()
 all_table <- readRDS("../kosdaq/all_stock_table.rds")
+Encoding(all_table$name) <- "UTF-8"
 #saveRDS(all_table,"../kosdaq/all_stock_table.rds")
 for(j in 1:nrow(all_table)){
   code <- all_table$code[j]
@@ -40,7 +41,7 @@ for(j in 1:nrow(all_table)){
   hist <- list(hist)
   names(hist) <- code
   histlist <<- append(histlist,hist)
-  Sys.sleep(0.5)
+  Sys.sleep(0.1)
 }
 
 saveRDS(histlist,file="../kosdaq/all_stock.rds")

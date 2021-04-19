@@ -14,6 +14,7 @@ candidate2 <- c()
 for (i in 1:length(histlist)){
   hist <- histlist[[i]][1:40,]
   code <- names(histlist)[i]
+  #basevolume <- mean(hist$volume)+sd(hist$volume)*6
   basevolume <- mean(hist$volume)*meanfactor
   
   isthere<-which(hist$volume>=basevolume)
@@ -145,6 +146,14 @@ print("##60일선의 3%")
 t60list
 ##20일선의 5% 60일선의 1%
 t <- sapply(ll,compare_mv,price=c("mv_20","mv_60"),alpha=c(0.05,0.01))
+t2060<-remove_null_list(t)
+t2060list<-kosdaq[which(kosdaq$code %in% names(t2060)),2]
+print("##20일선의 5% 60일선의 1%")
+t2060list
+
+
+##쌍바닥
+t <- sapply(ll,compare_mv_new,price=c("mv_20","mv_60"),alpha=c(0.05,0.01),"upper")
 t2060<-remove_null_list(t)
 t2060list<-kosdaq[which(kosdaq$code %in% names(t2060)),2]
 print("##20일선의 5% 60일선의 1%")
